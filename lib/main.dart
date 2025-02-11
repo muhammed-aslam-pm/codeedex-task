@@ -1,8 +1,10 @@
 import 'package:codeedex_machinetest/core/services/api_service.dart';
 import 'package:codeedex_machinetest/core/services/storage_service.dart';
 import 'package:codeedex_machinetest/viewmodels/auth_viemodel.dart';
+import 'package:codeedex_machinetest/viewmodels/product_viewmodel.dart';
 import 'package:codeedex_machinetest/views/auth/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,9 +18,8 @@ void main() async {
         Provider(
           create: (_) => ApiService(),
         ),
-        Provider(
-          create: (_) => StorageService(prefs),
-        ),
+        Provider(create: (_) => StorageService(prefs)),
+        ChangeNotifierProvider(create: (_) => ProductViewModel()),
         ChangeNotifierProvider(
           create: (context) => AuthViewModel(
             context.read<ApiService>(),
@@ -37,12 +38,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter MVVM Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const LoginScreen(),
-    );
+    return ScreenUtilInit(
+        designSize: const Size(375, 812),
+        minTextAdapt: true,
+        builder: (context, child) {
+          return MaterialApp(
+            title: 'Flutter MVVM Demo',
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+            ),
+            home: const LoginScreen(),
+          );
+        });
   }
 }

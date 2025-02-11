@@ -1,3 +1,4 @@
+import 'dart:developer';
 import '../core/services/api_service.dart';
 import '../core/services/storage_service.dart';
 import '../models/user_model.dart';
@@ -18,11 +19,21 @@ class AuthViewModel extends BaseViewModel {
 
     try {
       final response = await _apiService.login(email, password);
+
+      // Check if response contains error message
+      if (response.containsKey('non_field_errors')) {
+        final errorList = response['non_field_errors'] as List;
+        setError(errorList.first.toString());
+        setLoading(false);
+        return false;
+      }
+
       _user = UserModel.fromJson(response);
       await _storageService.saveAuthData(_user!.token, _user!.id);
       setLoading(false);
       return true;
     } catch (e) {
+      // Handle network or other errors
       setError(e.toString());
       setLoading(false);
       return false;
